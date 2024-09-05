@@ -6,22 +6,16 @@ import arc.Arc;
 
 public class DataParser {
 	
-	String sourcePath = null;
-	
-	public DataParser(String f) {
-		this.sourcePath = f;
-	}
-	
-	public List<Arc> extraxtArcs() {
+	public static List<Arc> extraxtArcs(String sourcePath) {
 		List<Arc> allArcs = new ArrayList<Arc>();
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(sourcePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                allArcs.add(this.parse(line));
+                allArcs.add(parseArcData(line));
             }
         } catch (IOException e) {
-        	System.out.println("Il file non esiste oppure è vuoto.");
+        	System.out.println("Input file path not found or void.");
             e.printStackTrace();
         }
 		
@@ -29,12 +23,12 @@ public class DataParser {
 		return allArcs;		
 	}
 
-	public Arc parse(String arcRawData) {
+	public static Arc parseArcData(String arcRawData) {
 		int ID_or;
 		int ID_dest;
 		ArrayList<Integer> stoc_costs = new ArrayList<Integer>();
 		
-		String[] rawDataPartitioned = this.divide(arcRawData);
+		String[] rawDataPartitioned = divide(arcRawData);
 
 		ID_or = Integer.parseInt(rawDataPartitioned[0]);
 		ID_dest = Integer.parseInt(rawDataPartitioned[1]);
@@ -52,9 +46,38 @@ public class DataParser {
 		return newArc;
 	}
 	
-	public String[] divide(String s) {
+	public static String[] divide(String s) {
 		String[] elements = s.substring(2).split(" ");//considera la stringa partire dal secondo numero, ignorando la a e lo spazio seguente
 		return elements;
+	}
+	
+	/**
+	 * Creates a n*m matrix in which each job is represented by a row
+	 * and every number is ID of the station that operates the
+	 * correspondent activity of that job. It takes as input the path to the
+	 * file that contains the same matrix.
+	 * @return station matrix
+	 */
+	public static int[][] createStationMatrix(String path, int n, int m) {
+		int[][] stationMatrix = new int[n][m];
+
+		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+			String line;
+			int i = 0;
+			while ((line = br.readLine()) != null) {
+				String[] s = line.split(" ");
+				for (int q=0; q<s.length; q++) {
+					stationMatrix[q][i] = Integer.parseInt(s[q]);
+				}
+				i++;
+			}
+		} catch (IOException e) {
+			System.out.println("Station file path not found or void.");
+			e.printStackTrace();
+
+		}
+
+		return stationMatrix;
 	}
 
 }

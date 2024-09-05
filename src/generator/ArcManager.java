@@ -13,16 +13,18 @@ public class ArcManager {
 	private List<Arc> setUps = null;
 	private List<Arc> dueDates = null;
 	private List<Arc> releases = null;
+	private int[][] stationMatrix;
 
 	private int n; //stations number
 	private int m; //jobs number
 
-	public ArcManager(List<Arc> allArcs, int n, int m) {
+	public ArcManager(List<Arc> allArcs, int[][] stationMatrix, int n, int m) {
 		this.arcs = allArcs;
 		this.n = n;
 		this.m = m;
+		this.stationMatrix = stationMatrix;
+		
 		this.arcManagerConstructor_ausiliary();
-
 	}
 
 	/**
@@ -78,34 +80,6 @@ public class ArcManager {
 		return actMatrix;
 	}
 
-	/**
-	 * Creates a n*m matrix in which each job is represented by a row
-	 * and every number is ID of the station that operates the
-	 * correspondent activity of that job. It takes as input the path to the
-	 * file that contains the same matrix.
-	 * @return station matrix
-	 */
-	public int[][] createStationMatrix(String path) {
-		int[][] stationMatrix = new int[this.n][this.m];
-
-		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-			String line;
-			int i = 0;
-			while ((line = br.readLine()) != null) {
-				String[] s = line.split(" ");
-				for (int q=0; q<s.length; q++) {
-					stationMatrix[q][i] = Integer.parseInt(s[q]);
-				}
-				i++;
-			}
-		} catch (IOException e) {
-			System.out.println("Il file non esiste oppure è vuoto.");
-			e.printStackTrace();
-
-		}
-
-		return stationMatrix;
-	}
 
 	public int calculate_j(int pos) {
 		return (pos-1)/(n+1);
@@ -146,17 +120,16 @@ public class ArcManager {
 	}
 
 
-	public int[][][] createSetUpMatrixes(String path) {
+	public int[][][] createSetUpMatrixes() {
 		int[][][] allSetUpMatrixes = new int[n][m][m];
 		for (int machine = 0; machine < n; machine++) {
             for (int i = 0; i < m; i++) {
                 Arrays.fill(allSetUpMatrixes[machine][i], 0); // o altro valore
             }
         }
-		
-		int[][] stationMatrix = this.createStationMatrix(path);		
+			
 		for (Arc stp : this.setUps) {
-			int station = stationMatrix[this.calculate_i(stp.getID_dest())][this.calculate_j(stp.getID_dest())];
+			int station = this.stationMatrix[this.calculate_i(stp.getID_dest())][this.calculate_j(stp.getID_dest())];
 			int job_or = this.calculate_j(stp.getID_or());
 			int job_dest = this.calculate_j(stp.getID_dest());
 			
@@ -224,7 +197,7 @@ public class ArcManager {
 	}
 	
 	/**
-	 * Selects a certain percentiile value for each acr.
+	 * Selects a certain percentile value for each acr.
 	 */
 	public void determinateAllCosts_exactPercentile(float p) {
 		for(Arc arc : this.arcs) {
@@ -258,6 +231,10 @@ public class ArcManager {
 
 	public List<Arc> getSetUps() {
 		return setUps;
+	}
+	
+	public int[][] getStationMatrix() {
+		return stationMatrix;
 	}
 
 

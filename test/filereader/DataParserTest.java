@@ -24,7 +24,7 @@ public class DataParserTest {
 	@Test
 	public void testParse() {
 		String s = "a 3 4 5 2 4 3 3 1 2 1";
-		Arc output = dp.parse(s);
+		Arc output = dp.parseArcData(s);
 		Arc expexted = new Arc(3, 4, null);
 		assertEquals(expexted, output);
 		
