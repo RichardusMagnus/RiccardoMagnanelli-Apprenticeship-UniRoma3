@@ -46,7 +46,7 @@ public class Arc {
 	
 	public void determinateCost_belowPercentile(float p) {
 		int maxIndex = (int) Math.floor((p/100)*(this.stoc_costs.size() - 1));
-		int rnd_index = new Random().nextInt(0, maxIndex);
+		int rnd_index = new Random().nextInt(maxIndex+1);
 		int deter_cost = stoc_costs.get(rnd_index);
 		this.setDeter_cost(deter_cost);
 	}
@@ -55,6 +55,11 @@ public class Arc {
 		int index = (int) Math.floor((p/100)*(this.stoc_costs.size() - 1));
 		int deter_cost = stoc_costs.get(index);
 		this.setDeter_cost(deter_cost);
+	}
+	
+	public int calculateIndex(float p) {
+		int index = (int) Math.floor((p/100)*(this.stoc_costs.size() - 1));
+		return index;
 	}
 	
 	

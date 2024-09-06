@@ -56,5 +56,15 @@ public class ArcTest {
 		int x =(this.arco.getCost());
 		assertTrue(x==1);
 	}
+	
+	@Test
+	public void testCalculateIndex() {
+		this.arco.setStoc_costs(costi);
+		int w = this.arco.calculateIndex(97);
+		System.out.println("OLLLLEEEE");
+		System.out.print(w);
+	}
+	
+	
 
 }
