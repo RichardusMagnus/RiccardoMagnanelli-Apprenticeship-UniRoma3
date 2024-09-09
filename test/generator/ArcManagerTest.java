@@ -54,7 +54,7 @@ public class ArcManagerTest {
 
 	@Test
 	public void testCreateActivityMatrix() {
-		am.determinateAllCosts_highest();
+		am.determinateAllCosts("100:");
 		int[][] mat = am.createActivityMatrix();
 		System.out.println(mat[0][0] + " " + mat[0][1]);
 		System.out.println(mat[1][0] + " " + mat[1][1]);
@@ -64,8 +64,8 @@ public class ArcManagerTest {
 
 	@Test
 	public void testCalculate_j() {
-		int x = am.calculate_j(10);
-		int y = am.calculate_j(35);
+		int x = am.calculate_job(10);
+		int y = am.calculate_job(35);
 		assertNotEquals(x, y);
 
 		
@@ -103,15 +103,13 @@ public class ArcManagerTest {
 		assertTrue(true);
 	}
 
-	@Test
-	public void testDeterminateAllCosts() {
-		fail("Not yet implemented");
-	}
+	
 	
 	@Test
 	public void testcreateStationMatrix() {
 		int[][] matrice = {{1,2, 3, 4},{2,3, 1, 4}};
 		assertArrayEquals(matrice, am.createStationMatrix("C:\\Users\\Kyky\\Desktop\\macchinetest.txt"));
 	}
+	
 
 }

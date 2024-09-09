@@ -42,7 +42,7 @@ public class ArcManager {
 				allReleases.add(arc);
 			else if (arc.getID_dest() == -2)
 				allDueDates.add(arc);
-			else if (calculate_j(arc.getID_or()) != calculate_j(arc.getID_dest()))
+			else if (calculate_job(arc.getID_or()) != calculate_job(arc.getID_dest()))
 				allSetUps.add(arc);
 			else allActivities.add(arc);
 		}
@@ -70,22 +70,24 @@ public class ArcManager {
 		for(int q=0; q<n; q++) for(int r=0; r<m; r++) actMatrix[q][r] = 0;
 
 		for (Arc activity : this.activities) {
-			int pos = activity.getID_or();
-			int i = this.calculate_i(pos);
-			int j = this.calculate_j(pos);
+			int ID = activity.getID_or();
+			int step = this.calculate_step(ID);
+			int job = this.calculate_job(ID);
 
-			actMatrix[i][j] = activity.getCost();
+			actMatrix[step][job] = activity.getCost();
 		}
 		
 		return actMatrix;
 	}
 
 
-	public int calculate_j(int pos) {
+	//calcola il job
+	public int calculate_job(int pos) {
 		return (pos-1)/(n+1);
 	}
 
-	public int calculate_i(int pos) {
+	//calcola il passo nella sequenza di passi del job
+	public int calculate_step(int pos) {
 		return pos%(n+1)-1;
 	}
 	
@@ -100,7 +102,7 @@ public class ArcManager {
 
 		for (Arc rel : this.releases) {
 			int pos = rel.getID_dest();
-			int j = calculate_j(pos);
+			int j = calculate_job(pos);
 			relArray[j] = rel.getCost();
 		}
 
@@ -112,7 +114,7 @@ public class ArcManager {
 
 		for (Arc rel : this.dueDates) {
 			int pos = rel.getID_or();
-			int j = calculate_j(pos);
+			int j = calculate_job(pos);
 			dueArray[j] = rel.getCost();
 		}
 
@@ -124,14 +126,14 @@ public class ArcManager {
 		int[][][] allSetUpMatrixes = new int[n][m][m];
 		for (int machine = 0; machine < n; machine++) {
             for (int i = 0; i < m; i++) {
-                Arrays.fill(allSetUpMatrixes[machine][i], 0); // o altro valore
+                Arrays.fill(allSetUpMatrixes[machine][i], 0);
             }
         }
 			
 		for (Arc stp : this.setUps) {
-			int station = this.stationMatrix[this.calculate_i(stp.getID_dest())][this.calculate_j(stp.getID_dest())];
-			int job_or = this.calculate_j(stp.getID_or());
-			int job_dest = this.calculate_j(stp.getID_dest());
+			int station = this.stationMatrix[this.calculate_step(stp.getID_dest())][this.calculate_job(stp.getID_dest())];
+			int job_or = this.calculate_job(stp.getID_or());
+			int job_dest = this.calculate_job(stp.getID_dest());
 			
 			allSetUpMatrixes[station][job_or][job_dest] = stp.getCost();
 		}
@@ -148,63 +150,12 @@ public class ArcManager {
 	
 	
 	/*COST DETERMINATION METHODS*/
-
-	/**
-	 * Selects a random admissible value for each acr.
-	 */
-	public void determinateAllCosts_random() {
+	public void determinateAllCosts(String range) {
 		for(Arc arc : this.arcs) {
-			arc.determinateCost_random();
+			arc.determinateCost(range);
 		}
 	}
 	
-	/**
-	 * Selects the highest admissible value for each acr.
-	 */
-	public void determinateAllCosts_highest() {
-		for(Arc arc : this.arcs) {
-			arc.determinateCost_highest();
-		}
-	}
-	
-	/**
-	 * Selects the lowest admissible value for each acr.
-	 */
-	public void determinateAllCosts_lowest() {
-		for(Arc arc : this.arcs) {
-			arc.determinateCost_lowest();
-		}
-	}
-	
-	/**
-	 * Selects a random admissible value OVER a
-	 * certain percentiile for each acr.
-	 */
-	public void determinateAllCosts_overPercentile(float p) {
-		for(Arc arc : this.arcs) {
-			arc.determinateCost_overPercentile(p);
-		}
-	}
-	
-	/**
-	 * Selects a random admissible value BELOW
-	 * a certain percentiile for each acr.
-	 */
-	public void determinateAllCosts_belowPercentile(float p) {
-		for(Arc arc : this.arcs) {
-			arc.determinateCost_belowPercentile(p);
-		}
-	}
-	
-	/**
-	 * Selects a certain percentile value for each acr.
-	 */
-	public void determinateAllCosts_exactPercentile(float p) {
-		for(Arc arc : this.arcs) {
-			arc.determinateCost_exactPercentile(p);
-		}
-	}
-
 
 
 	

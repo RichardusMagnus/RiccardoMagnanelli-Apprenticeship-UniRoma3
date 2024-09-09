@@ -3,6 +3,8 @@ package generator;
 import java.io.IOException;
 import java.util.List;
 
+import javax.xml.crypto.Data;
+
 import arc.Arc;
 import filemanager.DataParser;
 import filemanager.FileGenerator;
@@ -14,16 +16,18 @@ import filemanager.FileGenerator;
  */
 public class Runner {
 
-	/*input parametres*/
+	/*input parameters*/
 	int n;
 	int m;
-	String graphFilePath;
-	String stationFilePath;
+	String abz5_completeGraph_filePath;
+	String abz5_filePath;
 	String outputFileName;
-	int choice;
+	String[] allBounds;
 
-	/*output parametres*/
-	String outputFileName_definitive;
+	/*main operator*/
+	ArcManager structureBuilder;
+
+	/*output parameters*/
 	int[][] activityMatrix;
 	int[][] stationMatrix;
 	int[] releases;
@@ -31,94 +35,94 @@ public class Runner {
 	int[][][] allMatrixes;
 
 
-	public Runner(int n, int m, String graphFilePath, String stationFilePath, String outputFileName, int choice) {
-		this.n = n;
-		this.m = m;
-		this.graphFilePath = graphFilePath;
-		this.stationFilePath = stationFilePath;
-		this.outputFileName = outputFileName;
-		this.choice = choice;
+	public Runner(String abz5_cg_path, String abz5_filePath, String allBounds, String name) {
+		this.abz5_completeGraph_filePath = abz5_cg_path;
+		this.abz5_filePath = abz5_filePath;
+		this.allBounds = allBounds.trim().split("\\.");
+		this.outputFileName = "abz5_" + name + "_";
 	}
 	
 	
-	public void RUN_MAIN_LOGIC() {
-		List<Arc> listOfAllArcs = DataParser.extraxtArcs(graphFilePath);
-		this.stationMatrix = DataParser.createStationMatrix(stationFilePath, n, m);
-		ArcManager arcManager = new ArcManager(listOfAllArcs, stationMatrix, n, m);
+	
+
+
+	/**
+	 * Core of the program: after the first set up, it creates different files.
+	 * @throws IOException
+	 */
+	public void RUN_MAIN_LOGIC() throws IOException {
 		
-		this.CHOOSE_MODE(arcManager);
-		this.GENERATE_STRUCTURES(arcManager);
-		this.PRINT_STRUCTURES_ON_FILE();
+		this.SET_UP();
+		IOstream.println("sono di nuovo in main logic.");
+
+		int i=0;
+		for (String bounds : this.allBounds) {
+			IOstream.println("Sono nel for");
+			this.GENERATE_STRUCTURES(this.structureBuilder, bounds);
+			this.PRINT_STRUCTURES_ON_FILE(i);
+			i++;
+		}
+		
 	}
 	
 	
-	public void CHOOSE_MODE(ArcManager arcManager) {
-		switch (this.choice) {
-		case 1 : {
-			this.setOutputFileName_definitive("random");
-			arcManager.determinateAllCosts_random();
-			break;
-		}
-		case 2 : {
-			this.setOutputFileName_definitive("max");
-			arcManager.determinateAllCosts_highest();
-			break;
-		}
-		case 3 : {
-			this.setOutputFileName_definitive("min");
-			arcManager.determinateAllCosts_lowest();
-			break;
-		}
-		case 4 : {
-			int perc = UserInterface.dialogueRetrievePercentile();
-			this.setOutputFileName_definitive("over" + perc + "percentile");
-			arcManager.determinateAllCosts_overPercentile(perc);
-			break;
-		}
-		case 5 : {
-			int perc = UserInterface.dialogueRetrievePercentile();
-			this.setOutputFileName_definitive("below" + perc + "percentile");
-			arcManager.determinateAllCosts_belowPercentile(perc);
-			break;
-		}
-		case 6 : {
-			int perc = UserInterface.dialogueRetrievePercentile();
-			this.setOutputFileName_definitive("at" + perc + "percentile");
-			arcManager.determinateAllCosts_exactPercentile(perc);
-			break;
-		}
-		default : UserInterface.printNotValid();
+	
+	
+	
 
-		}
+	/*LOGICAL STEPS*/ 
+	
+	/**
+	 * Sets once and for all main input parameters (n, m), creates a station
+	 * matrix and reads all the arcs.
+	 * @throws IOException
+	 */
+	public void SET_UP() throws IOException {
+		IOstream.println("SETTING UP...");
+		this.stationMatrix = DataParser.extractStationMatrix(abz5_filePath);
+
+		this.m = this.stationMatrix.length;
+		this.n = this.stationMatrix[0].length;
+
+		List<Arc> listOfAllArcs = DataParser.extraxtArcs(this.abz5_completeGraph_filePath);
+		this.structureBuilder = new ArcManager(listOfAllArcs, this.stationMatrix, this.n, this.m);
+		IOstream.println("Set up done.");
 	}
 
 
 
-	public void GENERATE_STRUCTURES(ArcManager structureMaker) {
-		this.activityMatrix = structureMaker.createActivityMatrix();
-		this.releases = structureMaker.createReleaseArray();
-		this.dueDates = structureMaker.createDueDatesArray();
-		this.allMatrixes = structureMaker.createSetUpMatrixes();
+	/**
+	 * Builds the output to be printed on the text file.
+	 * @param structureBuilder
+	 * @param bounds
+	 */
+	public void GENERATE_STRUCTURES(ArcManager structureBuilder, String bounds) {
+
+		IOstream.println("GENERATING...");
+		structureBuilder.determinateAllCosts(bounds);
+		this.activityMatrix = structureBuilder.createActivityMatrix();
+		this.releases = structureBuilder.createReleaseArray();
+		this.dueDates = structureBuilder.createDueDatesArray();
+		this.allMatrixes = structureBuilder.createSetUpMatrixes();
 
 	}
-	
-	
-	public void PRINT_STRUCTURES_ON_FILE() {
+
+
+	/**
+	 * Prints the structures previously created.
+	 * @param i
+	 */
+	public void PRINT_STRUCTURES_ON_FILE(int i) {
+				
+		IOstream.println("PRINTING...");
+		String outputFileName_definitive = this.outputFileName + i + ".txt";
+		
 		FileGenerator fg = new FileGenerator(this.activityMatrix, this.stationMatrix, this.releases, this.dueDates, this.allMatrixes, this.n, this.m);
 		try {
-			fg.generateFile(this.outputFileName_definitive);
+			fg.generateFile(outputFileName_definitive);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-
-
-
-
-
-	public void setOutputFileName_definitive(String mode) {
-		this.outputFileName_definitive = outputFileName + "_" + mode + ".txt";
 	}
 
 

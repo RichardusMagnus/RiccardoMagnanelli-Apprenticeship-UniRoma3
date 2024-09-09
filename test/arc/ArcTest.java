@@ -3,6 +3,7 @@ package arc;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,46 +26,56 @@ public class ArcTest {
 		System.out.println(costi.get(1));
 		System.out.println(costi.get(2));
 		System.out.println(costi.get(3));
+		
+		arco.setStoc_costs(costi);
 	}
 
+	
+
+	
 	@Test
-	public void testDeterminateCost_random() {
+	public void testExtractBounds() {
+		String range = "25:75";
+		int expt[] = {25,75};
+		int otpt[] = arco.extractBounds(range);
 		
-		this.arco.setStoc_costs(costi);
-		
-		this.arco.determinateCost_random();
-		int x = this.arco.getCost();
-		assertTrue(x>=1 && x<=3);
+		assertArrayEquals(expt, otpt);
 	}
 	
 	@Test
-	public void testDeterminateCost_highest() {
+	public void testExtractBounds0x() {
+		String range = ":75";
+		int expt[] = {0,75};
+		int otpt[] = arco.extractBounds(range);
 		
-		this.arco.setStoc_costs(costi);
-		
-		this.arco.determinateCost_highest();
-		int x =(this.arco.getCost());
-		assertTrue(x==3);
+		assertArrayEquals(expt, otpt);
 	}
 	
 	@Test
-	public void testDeterminateCost_lowest() {
+	public void testExtractBoundsx100() {
+		String range = "25:100";
+		int expt[] = {25,100};
+		int otpt[] = arco.extractBounds(range);
 		
-		this.arco.setStoc_costs(costi);
-		
-		this.arco.determinateCost_lowest();
-		int x =(this.arco.getCost());
-		assertTrue(x==1);
+		assertArrayEquals(expt, otpt);
 	}
 	
 	@Test
-	public void testCalculateIndex() {
-		this.arco.setStoc_costs(costi);
-		int w = this.arco.calculateIndex(97);
-		System.out.println("OLLLLEEEE");
-		System.out.print(w);
+	public void testExtractBounds0100() {
+		String range = ":";
+		int expt[] = {0,100};
+		int otpt[] = arco.extractBounds(range);
+		
+		assertArrayEquals(expt, otpt);
 	}
 	
+	
+	
+	@Test
+	public void testDeterminateCost() {
+		arco.determinateCost("100:");
+		assertEquals(3, arco.getCost());
+	}
 	
 
 }

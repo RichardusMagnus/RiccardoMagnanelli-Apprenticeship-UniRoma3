@@ -3,6 +3,8 @@ package generator;
 import java.io.IOException;
 import java.util.*;
 
+import javax.xml.crypto.Data;
+
 import arc.Arc;
 import filemanager.DataParser;
 
@@ -16,51 +18,30 @@ import filemanager.DataParser;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
+		
+		/*LETTURA DA RIGA DI COMANDO*/
+		//args: PERCORSO DEL FILE ABZ \ PERCORSO DEL FILE CON L'ELENCO DEGLI ARCHI \ ELENCO PERCENTILI \ NOME OUTPUT
+		
+		/*args = new String[4];
+		
+		args[0] = "C:\\Users\\Kyky\\Desktop\\abz5.txt_complete_graph.txt";
+		args[1] = "C:\\Users\\Kyky\\Desktop\\abz5.txt";
+		args[2] = "35:65.0:100.:0";
+		args[3] = "CIAONE";
+		*/
+		
+		
+		Runner MAIN_RUNNER = new Runner(args[0], args[1], args[2], args[3]);
+		MAIN_RUNNER.RUN_MAIN_LOGIC();
+		
+		
 
-		UserInterface.printGreetings();
-		int n = UserInterface.dialogueRetrieveN();
-		int m = UserInterface.dialogueRetrieveM();
-		String graphFilePath = UserInterface.dialogueRetrieveInputPath();
-		String stationFilePath = UserInterface.dialogueRetrieveStationPath();
-		String outputFileName = UserInterface.dialogueChooseOutputName();
-
-		boolean exitGeneration = false;
-		while (!exitGeneration) {
-			int choice = UserInterface.dialogueRetrieveChoice();
-			Runner run = new Runner(n, m, graphFilePath, stationFilePath, outputFileName, choice);
-			run.RUN_MAIN_LOGIC();
-
-			switch (choice) {
-			case 1 : {
-				UserInterface.printRandomDone();
-				break;
-			}
-			case 2 : {
-				UserInterface.printMaxDone();
-				break;
-			}
-			case 3 : {
-				UserInterface.printMinDone();
-				break;
-			}
-			case 4 : {
-				UserInterface.printOverPercDone();
-				break;
-			}
-			case 5 : {
-				UserInterface.printBelowPercDone();
-				break;
-			}
-			case 6 : {
-				UserInterface.printExactPercDone();
-				break;
-			}
-			}
-
-			if (UserInterface.dialogueAskKeepUsingThisFile() == 0) exitGeneration = true;
-		}
-
-		UserInterface.printEnd();
-		IOstream.closeAllScanners();
+		
+		
+		
+		
+		
+		
+		
 	}
 }

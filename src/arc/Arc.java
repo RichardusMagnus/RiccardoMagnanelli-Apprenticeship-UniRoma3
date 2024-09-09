@@ -20,46 +20,36 @@ public class Arc {
 	
 	
 	/*COST DETERMINATION METHODS*/
-	
-	public void determinateCost_random() {
-		int rnd_index = new Random().nextInt(this.stoc_costs.size());
-		int deter_cost = stoc_costs.get(rnd_index);
-		this.setDeter_cost(deter_cost);
+	public void determinateCost(String range) {
+		
+		int[] bounds = this.extractBounds(range);
+		int LB = bounds[0];
+		int UB = bounds[1];
+		
+		int minIndex = (int) Math.floor((LB/100)*(this.stoc_costs.size() - 1));
+		int maxIndex = (int) Math.floor((UB/100)*(this.stoc_costs.size() - 1));
+		
+		if (minIndex==maxIndex) this.setDeter_cost(minIndex);
+		else {
+			int rndIndex = new Random().nextInt(minIndex, maxIndex);
+			this.setDeter_cost(rndIndex);
+		}
 	}
 	
-	public void determinateCost_highest() {
-		int deter_cost = this.stoc_costs.get(stoc_costs.size()-1);
-		this.setDeter_cost(deter_cost);
-	}
-	
-	public void determinateCost_lowest() {
-		int deter_cost = this.stoc_costs.get(0);
-		this.setDeter_cost(deter_cost);
-	}
-	
-	public void determinateCost_overPercentile(float p) {
-		int minIndex = (int) Math.floor((p/100)*(this.stoc_costs.size() - 1));
-		int rnd_index = new Random().nextInt(minIndex, this.stoc_costs.size());
-		int deter_cost = stoc_costs.get(rnd_index);
-		this.setDeter_cost(deter_cost);
-	}
-	
-	public void determinateCost_belowPercentile(float p) {
-		int maxIndex = (int) Math.floor((p/100)*(this.stoc_costs.size() - 1));
-		int rnd_index = new Random().nextInt(maxIndex+1);
-		int deter_cost = stoc_costs.get(rnd_index);
-		this.setDeter_cost(deter_cost);
-	}
-	
-	public void determinateCost_exactPercentile(float p) {
-		int index = (int) Math.floor((p/100)*(this.stoc_costs.size() - 1));
-		int deter_cost = stoc_costs.get(index);
-		this.setDeter_cost(deter_cost);
-	}
-	
-	public int calculateIndex(float p) {
-		int index = (int) Math.floor((p/100)*(this.stoc_costs.size() - 1));
-		return index;
+	public int[] extractBounds(String range) {
+		String[] parameters = range.split(":", -1);
+		int LB;
+		int UB;
+		
+		if (parameters[0].equals("")) LB = 0;
+		else LB = Integer.parseInt(parameters[0]);
+		
+		if (parameters[1].equals("")) UB = 100;
+		else UB = Integer.parseInt(parameters[1]);
+		
+		int[] bounds = {LB, UB};
+		return bounds;
+		
 	}
 	
 	
@@ -87,8 +77,8 @@ public class Arc {
 		this.stoc_costs = stoc_costs;
 	}
 	
-	public void setDeter_cost(int deter_cost) {
-		this.deter_cost = deter_cost;
+	public void setDeter_cost(int ind) {
+		this.deter_cost = this.stoc_costs.get(ind);
 	}
 	
 	
