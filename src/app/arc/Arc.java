@@ -23,8 +23,8 @@ public class Arc {
 	public void determinateCost(String range) {
 		
 		int[] bounds = this.extractBounds(range);
-		int LB = bounds[0];
-		int UB = bounds[1];
+		float LB = bounds[0];
+		float UB = bounds[1];
 		
 		int minIndex = (int) Math.floor((LB/100)*(this.stoc_costs.size() - 1));
 		int maxIndex = (int) Math.floor((UB/100)*(this.stoc_costs.size() - 1));
