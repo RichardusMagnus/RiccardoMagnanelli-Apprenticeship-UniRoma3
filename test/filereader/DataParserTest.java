@@ -8,11 +8,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import arc.Arc;
-import filemanager.*;
+import app.arc.Arc;
+import app.processing.*;
 
 public class DataParserTest {
-	DataParser dp = new DataParser();
+	InputExtractor dp = new InputExtractor();
 
 	@Test
 	public void testExtraxtArcs() {
@@ -57,7 +57,7 @@ public class DataParserTest {
 		String path = "C:\\Users\\Kyky\\Desktop\\sparapani.txt";
 		int n = 3;
 		int m = 4;
-		int[][] otpt = DataParser.extractStationMatrix(path);
+		int[][] otpt = InputExtractor.extractStationMatrix(path);
 
 		for(int a=0; a<otpt.length; a++) {
 			for(int b=0; b<otpt[a].length; b++) {

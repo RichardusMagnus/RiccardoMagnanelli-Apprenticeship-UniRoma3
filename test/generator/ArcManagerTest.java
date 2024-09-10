@@ -5,22 +5,23 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import arc.*;
-import filemanager.DataParser;
+import app.arc.*;
+import app.processing.InputExtractor;
+import app.processing.StructureBuilder;
 
 import java.util.*;
 
 public class ArcManagerTest {
 	
-	DataParser dp = new DataParser("C:\\Users\\Kyky\\Desktop\\grafo_origine.txt");
+	InputExtractor dp = new InputExtractor("C:\\Users\\Kyky\\Desktop\\grafo_origine.txt");
 	List<Arc> archi = new ArrayList<Arc>();
-	ArcManager am = null;
+	StructureBuilder am = null;
 	
 	
 	@Before
 	public void creaListaTest() {
 		archi.addAll(dp.extraxtArcs());
-		am = new ArcManager(archi, 4, 2);
+		am = new StructureBuilder(archi, 4, 2);
 	}
 	
 	@Test
@@ -55,7 +56,7 @@ public class ArcManagerTest {
 	@Test
 	public void testCreateActivityMatrix() {
 		am.determinateAllCosts("100:");
-		int[][] mat = am.createActivityMatrix();
+		int[][] mat = am.buildActivityMatrix();
 		System.out.println(mat[0][0] + " " + mat[0][1]);
 		System.out.println(mat[1][0] + " " + mat[1][1]);
 		

@@ -8,6 +8,8 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
+import app.arc.Arc;
+
 public class ArcTest {
 	public Arc arco = new Arc(0, 0, null);
 	ArrayList<Integer> costi = new ArrayList<Integer>();
